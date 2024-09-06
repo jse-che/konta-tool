@@ -1,42 +1,75 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+@import url("https://fonts.googleapis.com/css2?family=Bai+Jamjuree:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+:root {
+  --clr-primary: #29221d;
+  --clr-primay-light: #473b33;
+  --clr-secondary: #1e1611;
+  --clr-white: #fff;
+  --clr-black: #000;
+  --clr-pumpkin: #fe6c00;
+  --clr-silver: #a8a5a6;
+  --clr-silver-v1: #bdbabb;
+  --clr-scarlet: #fe1e00;
+  --clr-scarlet-v1: rgb(254, 30, 0, 0.79);
+  --clr-green: #00fe93;
+  --clr-yellow: #fec80a;
+  --clr-jet: #302924;
+  --clr-peach: #ffc397;
+  --font-family-bai: "Bai Jamjuree", sans-serif;
+  --transition-default: all 300ms ease-in-out;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+body {
+  font-family: var(--font-family-bai);
 }
 
-.card {
-  padding: 2em;
+ul {
+  list-style-type: none;
+}
+a {
+  color: unset;
+  text-decoration: none;
+  color: var(--clr-white);
+}
+button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
 }
 
-.read-the-docs {
-  color: #888;
+.img-fit-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.text-white {
+  color: var(--clr-white);
+}
+.text-silver-v1 {
+  color: var(--clr-silver-v1);
+}
+.text-scarlet {
+  color: var(--clr-scarlet);
+}
+.text-green {
+  color: var(--clr-green);
+}
+.bg-jet {
+  background: var(--clr-jet);
+}
+
+.text-sm {
+  font-size: 14px;
+}
+
+.app{
+  display: flex;
+  min-height: 100vh;
 }
