@@ -22,12 +22,13 @@ import person_one from "../assets/images/person_one.jpg";
 import person_two from "../assets/images/person_two.jpg";
 import person_three from "../assets/images/person_three.jpg";
 import person_four from "../assets/images/person_four.jpg";
+import logo from "../assets/images/logo.png";
 
 export const iconsImgs = {
     alert, bell, bills, budget, card, check, empty_check, gears, home, menu, plane, plus, report, search, user, wallet, wealth
 }
 
 export const personsImgs = {
-    person_one, person_two, person_three, person_four
+    person_one, person_two, person_three, person_four, logo
 };
 

@@ -10,16 +10,16 @@ const ContentTop = () => {
         <div className="content-top-left">
             <button type="button" className="sidebar-toggle" onClick={() => toggleSidebar()}
             >
-                <img src={iconsImgs.menu} alt="" />
+                <img src={iconsImgs.menu} />
             </button>
             <h3 className="content-top-title">Home</h3>
         </div>
         <div className="content-top-btns">
             <button type="button" className="search-btn content-top-btn">
-                <img src={iconsImgs.search} alt="" />
+                <img src={iconsImgs.search} />
             </button>
             <button className="notification-btn content-top-btn">
-                <img src={iconsImgs.bell} alt="" />
+                <img src={iconsImgs.bell} />
                 <span className="notification-btn-dot"></span>
             </button>
         </div>

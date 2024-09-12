@@ -1,54 +1,60 @@
-import "./Sidebar.css"
+import "./Sidebar.css";
 import { personsImgs } from "../../utils/images";
 import { navigationLinks } from "../../data/data";
-import { useContext ,useEffect,useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { SidebarContext } from "../../Context/sidebarContext";
 
+
 const Sidebar = () => {
+    const [activeLinkIdx, setActiveLinkIdx] = useState(1);
+    const [sidebarClass, setSidebarClass] = useState("");
+    const { isSidebarOpen } = useContext(SidebarContext);
 
-    const [activeLinkIdx] = useState(1)
-    const [sidebarClass, setSidebarClass] = useState("")
-    const {isSidebarOpen} = useContext(SidebarContext)
-    
     useEffect(() => {
-        if(isSidebarOpen){
-            setSidebarClass("sidebar-change")
-        } else{
-            setSidebarClass('')
+        if (isSidebarOpen) {
+            setSidebarClass("sidebar-change");
+        } else {
+            setSidebarClass("");
         }
-    }, [isSidebarOpen])
+    }, [isSidebarOpen]);
 
+    const handleLinkClick = (index) => {
+        setActiveLinkIdx(index); 
+    };
 
     return (
         <div className={`sidebar ${sidebarClass}`}>
             <div className="user-info">
-                <div className="info-img img-fit">
-                    <img src={personsImgs.person_two} alt="profile image" />
+                <div className="info-img img-fit-cover">
+                    <img src={personsImgs.logo} alt="profile image" />
                 </div>
-                <span className="info-name">alice-doe</span>
             </div>
             <nav className="navigation">
                 <ul className="nav-list">
-                    {
-                        navigationLinks.map((navigationLink) => (
-                            <li className="nav-item" key={
-                                navigationLink.id
-                            }> 
-                                <a href="#" className={`nav-link ${navigationLink.id === activeLinkIdx ? "active" : null}`}>
-                                    <img src={ navigationLink.image}
-                                    className="nav-link-icon" alt =
-                                    {navigationLink.title} />
-                                    <span className="nav-link-text">
-                                        {navigationLink.title}
-                                    </span>
-                                </a>
-                            </li>
-                        ))
-                    }
+                    {navigationLinks.map((navigationLink, index) => (
+                        <li className="nav-item" key={navigationLink.id}>
+                            <a
+                                href="#"
+                                className={`nav-link ${
+                                    index === activeLinkIdx ? "active" : ""
+                                }`}
+                                onClick={() => handleLinkClick(index)}
+                            >
+                                <img
+                                    src={navigationLink.image}
+                                    className="nav-link-icon"
+                                    alt={navigationLink.title}
+                                />
+                                <span className="nav-link-text">
+                                    {navigationLink.title}
+                                </span>
+                            </a>
+                        </li>
+                    ))}
                 </ul>
             </nav>
         </div>
-    )
-}
+    );
+};
 
-export default Sidebar
+export default Sidebar;
