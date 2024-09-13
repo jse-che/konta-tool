@@ -48,9 +48,6 @@ const UploadBox = ({ inputFileRef, onFilesDrop, onFilesSelect }) => {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
-      <div className="titleUpload">
-        <h1 className='title'>Sube tus facturas electrónicas</h1>
-      </div>
       <form>
         <input
           type="file"

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import JSZip from 'jszip';
-import { Button } from '@mui/material';
+import { Button, Container } from '@mui/material';
 import { utils, write } from 'xlsx';
 import UploadBox from '../UploadBox/UploadBox';
 import DataTable from '../DataTable/DataTable';
@@ -92,7 +92,6 @@ function Uploader() {
       pdfFolder.file(pdfFileName, 'This is a sample PDF file content.');
     });
 
-
     const ws = utils.json_to_sheet(tableData, {
       header: ["Fecha", "No. Factura", "Empresa", "Nit", "SubTotal", "IVAo", "Total", "Nombre Factura"]
     });
@@ -114,7 +113,7 @@ function Uploader() {
   };
 
   return (
-    <div className='mainUploader'>
+    <Container style={{ padding: '20px' }}>
       {!isUploaded ? (
         <UploadBox 
           inputFileRef={inputFileRef} 
@@ -123,10 +122,10 @@ function Uploader() {
         />
       ) : (
         <div>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            onClick={downloadFiles} 
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={downloadFiles}
             style={{ marginBottom: '20px' }}
           >
             Descargar archivos
@@ -134,7 +133,7 @@ function Uploader() {
           <DataTable data={tableData} />
         </div>
       )}
-    </div>
+    </Container>
   );
 }
 

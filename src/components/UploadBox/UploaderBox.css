@@ -2,22 +2,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 70vh;
   }
-  
-.uploaderBox {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #1475cf;
-    border-radius: 12px;
-    background-color: #f0f8ff;
-    padding: 30px;
-    box-shadow: 0 6px 12px rgba(46, 45, 45, 0.815); 
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-  
+    
 
 input.input-field {
     display: none;
