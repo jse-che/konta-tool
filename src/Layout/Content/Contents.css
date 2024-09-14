@@ -4,6 +4,13 @@
     padding: 32px;
 }
 
+@media screen and (max-width: 780px) {
+    .main-content{
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
 @media screen and (max-width: 1400px) {
     .main-content{
         padding-left: 20px;

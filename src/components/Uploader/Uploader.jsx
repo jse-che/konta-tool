@@ -9,6 +9,7 @@ function Uploader() {
   const inputFileRef = useRef(null);
   const [tableData, setTableData] = useState([]);
   const [isUploaded, setIsUploaded] = useState(false);
+  const fileMap = useRef(new Map()); 
 
   const processFiles = (files) => {
     const zipFiles = Array.from(files).filter(file => file.name.endsWith('.zip'));
@@ -17,10 +18,14 @@ function Uploader() {
         return JSZip.loadAsync(zipFile).then(zip => {
           const xmlPromises = [];
           zip.forEach((relativePath, file) => {
-            if (file.name.endsWith('.xml')) {
-              xmlPromises.push(file.async('text').then(xmlContent => {
-                processXML(xmlContent, file.name);
-              }));
+            if (file.name.endsWith('.xml') || file.name.endsWith('.pdf')) {
+              // Almacenar el archivo original en el mapa
+              fileMap.current.set(file.name, file);
+              if (file.name.endsWith('.xml')) {
+                xmlPromises.push(file.async('text').then(xmlContent => {
+                  processXML(xmlContent, file.name);
+                }));
+              }
             }
           });
           return Promise.all(xmlPromises);
@@ -75,37 +80,59 @@ function Uploader() {
 
     setTableData(prevData => [
       ...prevData,
-      [issueDate, parentDocumentID, registrationName, companyID, taxableAmount, taxAmount, payableAmount, xmlFileNameWithoutExtension]
+      [issueDate, parentDocumentID, registrationName, companyID, taxableAmount, taxAmount, payableAmount, xmlFileNameWithoutExtension, cufe]
     ]);
   };
 
   const downloadFiles = async () => {
     const zip = new JSZip();
 
-    const xmlFolder = zip.folder('xml');
-    const pdfFolder = zip.folder('pdf');
+    // Crear carpetas XMLs y PDFs en el zip
+    const xmlFolder = zip.folder('XMLs');
+    const pdfFolder = zip.folder('PDFs');
 
-    tableData.forEach(row => {
-      const xmlFileName = `${row[7]}.xml`;
-      const pdfFileName = `${row[7]}.pdf`;
-      xmlFolder.file(xmlFileName, 'This is a sample XML file content.');
-      pdfFolder.file(pdfFileName, 'This is a sample PDF file content.');
+
+    fileMap.current.forEach((file, fileName) => {
+      if (fileName.endsWith('.xml')) {
+        file.async('blob').then(content => {
+          xmlFolder.file(fileName, content);
+        });
+      } else if (fileName.endsWith('.pdf')) {
+        file.async('blob').then(content => {
+          const folderName = fileName.replace('.pdf', '');
+          pdfFolder.file(`${folderName}/${fileName}`, content);  
+        });
+      }
     });
 
-    const ws = utils.json_to_sheet(tableData, {
-      header: ["Fecha", "No. Factura", "Empresa", "Nit", "SubTotal", "IVAo", "Total", "Nombre Factura"]
-    });
+
+    const ws = utils.json_to_sheet(
+      tableData.map(row => ({
+        Fecha: row[0],
+        'No. Factura': row[1],
+        Empresa: row[2],
+        Nit: row[3],
+        SubTotal: row[4],
+        IVA: row[5],
+        Total: row[6],
+        'Nombre Factura': row[7],
+        CUFE: row[8]
+      })), 
+      { header: ["Fecha", "No. Factura", "Empresa", "Nit", "SubTotal", "IVA", "Total", "Nombre Factura", "CUFE"] }
+    );
     const wb = utils.book_new();
-    utils.book_append_sheet(wb, ws, 'Data');
+    utils.book_append_sheet(wb, ws, 'Resumen');
+
 
     const excelContent = write(wb, { type: 'array', bookType: 'xlsx' });
 
-    zip.file('data.xlsx', excelContent);
+
+    zip.file('Resumen.xlsx', excelContent);
 
     zip.generateAsync({ type: 'blob' }).then(content => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(content);
-      a.download = 'files.zip';
+      a.download = 'Archivos.zip';
       a.click();
     }).catch(err => {
       console.error('Error generating ZIP file:', err);
@@ -113,7 +140,7 @@ function Uploader() {
   };
 
   return (
-    <Container style={{ padding: '20px' }}>
+    <Container style={{ padding: '20px', width: '100%', maxWidth: '1200px' }}>
       {!isUploaded ? (
         <UploadBox 
           inputFileRef={inputFileRef} 
@@ -130,7 +157,7 @@ function Uploader() {
           >
             Descargar archivos
           </Button>
-          <DataTable data={tableData} />
+          <DataTable data={tableData.map(row => row.slice(0, -1))} />
         </div>
       )}
     </Container>

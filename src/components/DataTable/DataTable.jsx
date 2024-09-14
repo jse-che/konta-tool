@@ -1,17 +1,22 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TableSortLabel } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import './DataTable.css'
 
-// Estilos personalizados para la tabla
-const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
-  marginTop: theme.spacing(3),
-  boxShadow: theme.shadows[3],
-}));
+const TableWrapper = styled('div')({
+  width: '100%', 
+  maxWidth: '1200px', 
+  margin: '0 auto', 
+  overflowX: 'hidden',
+  overflowY: 'auto',
+});
 
 const StyledTable = styled(Table)(({ theme }) => ({
-  minWidth: 650,
+  minWidth: 1000,
   borderCollapse: 'collapse',
+  width: '100%',
 }));
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -33,6 +38,9 @@ const HeaderCell = styled(TableCell)(({ theme }) => ({
   backgroundColor: theme.palette.grey[200],
   padding: theme.spacing(1.5),
   textAlign: 'center',
+  position: 'sticky',
+  top: 0,
+  zIndex: 1, 
 }));
 
 const DataTable = ({ data }) => {
@@ -72,95 +80,97 @@ const DataTable = ({ data }) => {
   };
 
   return (
-    <StyledTableContainer component={Paper}>
-      <StyledTable>
-        <TableHead>
-          <TableRow>
-            <HeaderCell>
-              <TableSortLabel
-                active={orderBy === 'fecha'}
-                direction={orderBy === 'fecha' ? order : 'asc'}
-                onClick={() => handleRequestSort('fecha')}
-              >
-                Fecha
-              </TableSortLabel>
-            </HeaderCell>
-            <HeaderCell>
-              <TableSortLabel
-                active={orderBy === 'noFactura'}
-                direction={orderBy === 'noFactura' ? order : 'asc'}
-                onClick={() => handleRequestSort('noFactura')}
-              >
-                No. Factura
-              </TableSortLabel>
-            </HeaderCell>
-            <HeaderCell>
-              <TableSortLabel
-                active={orderBy === 'empresa'}
-                direction={orderBy === 'empresa' ? order : 'asc'}
-                onClick={() => handleRequestSort('empresa')}
-              >
-                Empresa
-              </TableSortLabel>
-            </HeaderCell>
-            <HeaderCell>
-              <TableSortLabel
-                active={orderBy === 'nit'}
-                direction={orderBy === 'nit' ? order : 'asc'}
-                onClick={() => handleRequestSort('nit')}
-              >
-                Nit
-              </TableSortLabel>
-            </HeaderCell>
-            <HeaderCell>
-              <TableSortLabel
-                active={orderBy === 'subtotal'}
-                direction={orderBy === 'subtotal' ? order : 'asc'}
-                onClick={() => handleRequestSort('subtotal')}
-              >
-                SubTotal
-              </TableSortLabel>
-            </HeaderCell>
-            <HeaderCell>
-              <TableSortLabel
-                active={orderBy === 'ivao'}
-                direction={orderBy === 'ivao' ? order : 'asc'}
-                onClick={() => handleRequestSort('ivao')}
-              >
-                IVA
-              </TableSortLabel>
-            </HeaderCell>
-            <HeaderCell>
-              <TableSortLabel
-                active={orderBy === 'total'}
-                direction={orderBy === 'total' ? order : 'asc'}
-                onClick={() => handleRequestSort('total')}
-              >
-                Total
-              </TableSortLabel>
-            </HeaderCell>
-            <HeaderCell>
-              <TableSortLabel
-                active={orderBy === 'nombreFactura'}
-                direction={orderBy === 'nombreFactura' ? order : 'asc'}
-                onClick={() => handleRequestSort('nombreFactura')}
-              >
-                Nombre Factura
-              </TableSortLabel>
-            </HeaderCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sortedData.map((row, index) => (
-            <StyledTableRow key={index}>
-              {row.map((cell, cellIndex) => (
-                <StyledTableCell key={cellIndex}>{cell}</StyledTableCell>
-              ))}
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </StyledTable>
-    </StyledTableContainer>
+    <TableContainer component={Paper}>
+      <TableWrapper className="table-wrapper">
+        <StyledTable>
+          <TableHead>
+            <TableRow>
+              <HeaderCell>
+                <TableSortLabel
+                  active={orderBy === 'fecha'}
+                  direction={orderBy === 'fecha' ? order : 'asc'}
+                  onClick={() => handleRequestSort('fecha')}
+                >
+                  Fecha
+                </TableSortLabel>
+              </HeaderCell>
+              <HeaderCell>
+                <TableSortLabel
+                  active={orderBy === 'noFactura'}
+                  direction={orderBy === 'noFactura' ? order : 'asc'}
+                  onClick={() => handleRequestSort('noFactura')}
+                >
+                  No. Factura
+                </TableSortLabel>
+              </HeaderCell>
+              <HeaderCell>
+                <TableSortLabel
+                  active={orderBy === 'empresa'}
+                  direction={orderBy === 'empresa' ? order : 'asc'}
+                  onClick={() => handleRequestSort('empresa')}
+                >
+                  Empresa
+                </TableSortLabel>
+              </HeaderCell>
+              <HeaderCell>
+                <TableSortLabel
+                  active={orderBy === 'nit'}
+                  direction={orderBy === 'nit' ? order : 'asc'}
+                  onClick={() => handleRequestSort('nit')}
+                >
+                  Nit
+                </TableSortLabel>
+              </HeaderCell>
+              <HeaderCell>
+                <TableSortLabel
+                  active={orderBy === 'subtotal'}
+                  direction={orderBy === 'subtotal' ? order : 'asc'}
+                  onClick={() => handleRequestSort('subtotal')}
+                >
+                  SubTotal
+                </TableSortLabel>
+              </HeaderCell>
+              <HeaderCell>
+                <TableSortLabel
+                  active={orderBy === 'ivao'}
+                  direction={orderBy === 'ivao' ? order : 'asc'}
+                  onClick={() => handleRequestSort('ivao')}
+                >
+                  IVA
+                </TableSortLabel>
+              </HeaderCell>
+              <HeaderCell>
+                <TableSortLabel
+                  active={orderBy === 'total'}
+                  direction={orderBy === 'total' ? order : 'asc'}
+                  onClick={() => handleRequestSort('total')}
+                >
+                  Total
+                </TableSortLabel>
+              </HeaderCell>
+              <HeaderCell>
+                <TableSortLabel
+                  active={orderBy === 'nombreFactura'}
+                  direction={orderBy === 'nombreFactura' ? order : 'asc'}
+                  onClick={() => handleRequestSort('nombreFactura')}
+                >
+                  Nombre Factura
+                </TableSortLabel>
+              </HeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {sortedData.map((row, index) => (
+              <StyledTableRow key={index}>
+                {row.map((cell, cellIndex) => (
+                  <StyledTableCell key={cellIndex}>{cell}</StyledTableCell>
+                ))}
+              </StyledTableRow>
+            ))}
+          </TableBody>
+        </StyledTable>
+      </TableWrapper>
+    </TableContainer>
   );
 };
 
