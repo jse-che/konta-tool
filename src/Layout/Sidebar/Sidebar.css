@@ -101,6 +101,7 @@
     text-decoration: capitalize;
 }
 
+
 @media screen and (max-width: 1400px) {
     .sidebar{
         padding: 24px 16px;

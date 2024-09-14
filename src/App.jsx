@@ -4,7 +4,6 @@ import Content from './Layout/Content/Content'
 
 
 function App() {
-
   return (
     <>
       <div className="app">

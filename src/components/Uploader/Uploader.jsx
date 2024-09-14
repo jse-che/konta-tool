@@ -9,27 +9,14 @@ function Uploader() {
   const inputFileRef = useRef(null);
   const [tableData, setTableData] = useState([]);
   const [isUploaded, setIsUploaded] = useState(false);
-  const fileMap = useRef(new Map()); 
+  const fileMap = useRef(new Map());
 
+  // Función que procesa los archivos recursivamente
   const processFiles = (files) => {
     const zipFiles = Array.from(files).filter(file => file.name.endsWith('.zip'));
     if (zipFiles.length > 0) {
       const filePromises = zipFiles.map(zipFile => {
-        return JSZip.loadAsync(zipFile).then(zip => {
-          const xmlPromises = [];
-          zip.forEach((relativePath, file) => {
-            if (file.name.endsWith('.xml') || file.name.endsWith('.pdf')) {
-              // Almacenar el archivo original en el mapa
-              fileMap.current.set(file.name, file);
-              if (file.name.endsWith('.xml')) {
-                xmlPromises.push(file.async('text').then(xmlContent => {
-                  processXML(xmlContent, file.name);
-                }));
-              }
-            }
-          });
-          return Promise.all(xmlPromises);
-        });
+        return JSZip.loadAsync(zipFile).then(zip => processZipFile(zip));
       });
 
       Promise.all(filePromises).then(() => {
@@ -38,6 +25,36 @@ function Uploader() {
     }
   };
 
+  // Función que procesa un archivo zip
+  const processZipFile = (zip) => {
+    const filePromises = [];
+
+    zip.forEach((relativePath, file) => {
+      if (file.name.endsWith('.zip')) {
+        // Si es un archivo zip anidado, procesarlo recursivamente
+        filePromises.push(
+          file.async('blob').then(blob => JSZip.loadAsync(blob)).then(innerZip => {
+            return processZipFile(innerZip);
+          })
+        );
+      } else if (file.name.endsWith('.xml') || file.name.endsWith('.pdf')) {
+        // Almacenar el archivo en el mapa de archivos
+        fileMap.current.set(file.name, file);
+
+        if (file.name.endsWith('.xml')) {
+          filePromises.push(
+            file.async('text').then(xmlContent => {
+              processXML(xmlContent, file.name);
+            })
+          );
+        }
+      }
+    });
+
+    return Promise.all(filePromises);
+  };
+
+  // Función que procesa el contenido del archivo XML
   const processXML = (xmlContent, fileName) => {
     const parser = new DOMParser();
     const docXML = parser.parseFromString(xmlContent, "application/xml");
@@ -84,13 +101,13 @@ function Uploader() {
     ]);
   };
 
+  // Función que descarga los archivos procesados
   const downloadFiles = async () => {
     const zip = new JSZip();
 
     // Crear carpetas XMLs y PDFs en el zip
     const xmlFolder = zip.folder('XMLs');
     const pdfFolder = zip.folder('PDFs');
-
 
     fileMap.current.forEach((file, fileName) => {
       if (fileName.endsWith('.xml')) {
@@ -100,11 +117,10 @@ function Uploader() {
       } else if (fileName.endsWith('.pdf')) {
         file.async('blob').then(content => {
           const folderName = fileName.replace('.pdf', '');
-          pdfFolder.file(`${folderName}/${fileName}`, content);  
+          pdfFolder.file(`${folderName}/${fileName}`, content);
         });
       }
     });
-
 
     const ws = utils.json_to_sheet(
       tableData.map(row => ({
@@ -117,15 +133,13 @@ function Uploader() {
         Total: row[6],
         'Nombre Factura': row[7],
         CUFE: row[8]
-      })), 
+      })),
       { header: ["Fecha", "No. Factura", "Empresa", "Nit", "SubTotal", "IVA", "Total", "Nombre Factura", "CUFE"] }
     );
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Resumen');
 
-
     const excelContent = write(wb, { type: 'array', bookType: 'xlsx' });
-
 
     zip.file('Resumen.xlsx', excelContent);
 
