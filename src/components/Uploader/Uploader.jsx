@@ -106,26 +106,33 @@ function Uploader() {
   const downloadFiles = async () => {
     const zip = new JSZip();
   
-    const xmlFolder = zip.folder('XMLs');
-    const pdfFolder = zip.folder('PDFs');
+    const xmlFolder = zip.folder('XMLs'); // Carpeta para archivos XML
+    const pdfFolder = zip.folder('PDFs'); // Carpeta para archivos PDF
   
     const filePromises = [];
   
     fileMap.current.forEach((file, fileName) => {
+      console.log(`Processing file: ${fileName}`); // Debugging: Check the file name
+  
       if (fileName.endsWith('.xml')) {
+        // Ensure fileName is just the file name without extra paths
+        const xmlFileName = fileName.split('/').pop();
         const xmlPromise = file.async('blob').then(content => {
-          xmlFolder.file(fileName, content);
+          xmlFolder.file(xmlFileName, content);
         });
         filePromises.push(xmlPromise);
       } else if (fileName.endsWith('.pdf')) {
+        // Ensure fileName is just the file name without extra paths
+        const pdfFileName = fileName.split('/').pop();
         const pdfPromise = file.async('blob').then(content => {
-          pdfFolder.file(fileName, content);
+          pdfFolder.file(pdfFileName, content);
         });
         filePromises.push(pdfPromise);
       }
     });
   
     Promise.all(filePromises).then(() => {
+      // Create the Excel file
       const ws = utils.json_to_sheet(
         tableData.map(row => ({
           Fecha: row[0],
@@ -147,6 +154,7 @@ function Uploader() {
   
       zip.file('Resumen.xlsx', excelContent);
   
+      // Generate the ZIP file and trigger download
       zip.generateAsync({ type: 'blob' }).then(content => {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(content);
