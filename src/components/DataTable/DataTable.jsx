@@ -88,7 +88,7 @@ const ArrowButton = styled('button')({
 
 const DataTable = ({ data }) => {
   const [order, setOrder] = useState('asc');
-  const [orderBy, setOrderBy] = useState('fecha');
+  const [orderBy, setOrderBy] = useState('');
   const [sortedData, setSortedData] = useState(data);
   const [page, setPage] = useState(0); 
   const [rowsPerPage] = useState(9);
