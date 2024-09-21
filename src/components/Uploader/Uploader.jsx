@@ -2,11 +2,13 @@
 import React, { useRef, useState } from 'react';
 import JSZip from 'jszip';
 import { Button, Container, Box } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
 import { utils, write } from 'xlsx';
 
 import UploadBox from '../UploadBox/UploadBox';
 import DataTable from '../DataTable/DataTable';
 import SearchBar from '../Search/Search';
+import './Uploader.css';
 
 function Uploader() {
   const inputFileRef = useRef(null);
@@ -230,7 +232,9 @@ function Uploader() {
               variant="contained"
               color="primary"
               onClick={downloadFiles}
+              className="download-button"
             >
+              <DownloadIcon className="download-icon" /> 
               Descargar archivos
             </Button>
             <SearchBar onSearch={handleSearch} />

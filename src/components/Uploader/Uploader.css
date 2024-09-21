@@ -1,0 +1,21 @@
+.download-button {
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    text-transform: capitalize !important;
+  }
+  
+  .download-icon {
+    margin-right: 8px;
+    transition: transform 0.3s ease; 
+  }
+  
+  .download-button:hover {
+    transform: scale(1.05); 
+  }
+  
+  .download-button:hover .download-icon {
+    transform: rotate(360deg); 
+  }
