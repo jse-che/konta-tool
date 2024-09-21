@@ -1,15 +1,8 @@
-/* .sidebar{
-    background-color: var(--clr-primary);
-    width: 260px;
-    padding: 36px 20px;
-    transition: var(--transition-default);
-} */
-
 .sidebar {
     background: linear-gradient(180deg, #00BFFF, #002B5B);
     color: white;
     padding: 36px 20px;
-    width: 260px;
+    width: 200px;
     transition: var(--transition-default);
 }
 
@@ -61,7 +54,7 @@
 }
 
 .sidebar-change{
-    margin-left: -260px;
+    margin-left: -200px;
 }
 
 .nav-item{

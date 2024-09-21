@@ -1,40 +1,59 @@
-.main-content-top{
+.main-content-top {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 32px;
+    transition: background-color 0.3s, color 0.3s; /* Añadir transición */
 }
 
-.sidebar-toggle{
+.sidebar-toggle {
     display: flex;
     align-items: center;
     margin-right: 12px;
 }
 
-.sidebar-toggle img{
+.sidebar-toggle img {
     width: 20px;
 }
 
-.content-top-title{
+.content-top-title {
     color: var(--clr-black);
     font-size: 20px;
     font-weight: 600;
 }
 
-.content-top-btn{
+.content-top-btns {
+    display: flex;
+    align-items: center; 
+}
+
+.content-top-btn {
     margin-left: 18px;
 }
 
-.content-top-btn img{
+.content-top-btn img {
     width: 24px;
 }
 
-.content-top-btn img:hover{
+.content-top-btn img:hover {
     filter: brightness(0) invert(1);
 }
 
-.content-top-left{
+.content-top-left {
     display: flex;
     align-items: center;
 }
 
+.user-icon-btn {
+    margin-left: 18px; 
+}
+
+/* Estilos para el modo oscuro */
+body.dark-mode {
+    background-color: #121212; /* Fondo oscuro */
+    color: #ffffff; /* Texto claro */
+}
+
+.main-content-top.dark-mode {
+    background-color: #1e1e1e; /* Fondo oscuro para la cabecera */
+}

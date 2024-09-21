@@ -1,16 +1,17 @@
 /* Estilo para el contenedor de la tabla */
-.table-wrapper {
+.table-wrapper::-webkit-scrollbar{
     width: 100%;
     max-width: 1200px; 
     margin: 0 auto; 
     overflow-x: auto;
     overflow-y: auto;
+    display: none;
 }
 
 
 @media (max-width: 600px) {
     .table-wrapper {
-        max-height: 300px; 
+        max-height: 200px; 
     }
 }
 

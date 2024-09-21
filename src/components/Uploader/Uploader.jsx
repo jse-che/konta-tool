@@ -1,17 +1,18 @@
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable no-unused-vars */
 import React, { useRef, useState } from 'react';
-
 import JSZip from 'jszip';
-import { Button, Container } from '@mui/material';
+import { Button, Container, Box } from '@mui/material';
 import { utils, write } from 'xlsx';
 
 import UploadBox from '../UploadBox/UploadBox';
 import DataTable from '../DataTable/DataTable';
+import SearchBar from '../Search/Search';
 
 function Uploader() {
   const inputFileRef = useRef(null);
   const [tableData, setTableData] = useState([]);
   const [isUploaded, setIsUploaded] = useState(false);
+  const [filteredData, setFilteredData] = useState([]);
   const fileMap = useRef(new Map());
 
   const processFiles = (files) => {
@@ -91,38 +92,73 @@ function Uploader() {
     const registrationName = senderParty ? getElementTextContent(senderParty, "cbc:RegistrationName", "N/A") : "N/A";
     const companyID = senderParty ? getElementTextContent(senderParty, "cbc:CompanyID", "N/A") : "N/A";
   
+    const referenceEventCode = getElementTextContent(innerDoc, "cbc:ReferenceEventCode", "N/A");
+  
+    const getPaymentType = (code) => {
+      switch (code) {
+        case '2':
+          return 'Credito';
+        case '1':
+          return 'Contado';
+        case '0':
+          return 'Inmediato';
+        default:
+          return 'N/A ';
+      }
+    };
+
+    const formatCurrency = (value) => {
+      return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP',
+      }).format(value);
+    };
+  
+    const paymentType = getPaymentType(referenceEventCode);
+  
     const xmlFileNameWithoutExtension = fileName.split("/").pop().replace(".xml", "");
-    
     const cleanFileName = xmlFileNameWithoutExtension.startsWith("XML_")
       ? xmlFileNameWithoutExtension.substring(4)
       : xmlFileNameWithoutExtension;
   
-    setTableData(prevData => [
-      ...prevData,
-      [issueDate, parentDocumentID, registrationName, companyID, taxableAmount, taxAmount, payableAmount, cleanFileName, cufe]
-    ]);
+      const newRow = [
+        issueDate,           
+        parentDocumentID,    
+        registrationName,    
+        companyID,           
+        taxableAmount,      
+        taxAmount,           
+        payableAmount,      
+        paymentType,         
+        cleanFileName,       
+        cufe                  
+      ];
+  
+    setTableData(prevData => {
+      const updatedData = [...prevData, newRow];
+      setFilteredData(updatedData);
+      return updatedData;
+    });
   };
 
   const downloadFiles = async () => {
     const zip = new JSZip();
-  
-    const xmlFolder = zip.folder('XMLs'); // Carpeta para archivos XML
-    const pdfFolder = zip.folder('PDFs'); // Carpeta para archivos PDF
-  
+
+    const xmlFolder = zip.folder('XMLs');
+    const pdfFolder = zip.folder('PDFs');
+
     const filePromises = [];
-  
+
     fileMap.current.forEach((file, fileName) => {
-      console.log(`Processing file: ${fileName}`); // Debugging: Check the file name
-  
+      console.log(`Processing file: ${fileName}`);
+
       if (fileName.endsWith('.xml')) {
-        // Ensure fileName is just the file name without extra paths
         const xmlFileName = fileName.split('/').pop();
         const xmlPromise = file.async('blob').then(content => {
           xmlFolder.file(xmlFileName, content);
         });
         filePromises.push(xmlPromise);
       } else if (fileName.endsWith('.pdf')) {
-        // Ensure fileName is just the file name without extra paths
         const pdfFileName = fileName.split('/').pop();
         const pdfPromise = file.async('blob').then(content => {
           pdfFolder.file(pdfFileName, content);
@@ -130,9 +166,8 @@ function Uploader() {
         filePromises.push(pdfPromise);
       }
     });
-  
+
     Promise.all(filePromises).then(() => {
-      // Create the Excel file
       const ws = utils.json_to_sheet(
         tableData.map(row => ({
           Fecha: row[0],
@@ -142,19 +177,19 @@ function Uploader() {
           SubTotal: row[4],
           IVA: row[5],
           Total: row[6],
-          'Nombre Factura': row[7],
-          CUFE: row[8]
+          'Medio Pago': row[7],  
+          'Nombre Factura': row[8],  
+          CUFE: row[9]
         })),
-        { header: ["Fecha", "No. Factura", "Empresa", "Nit", "SubTotal", "IVA", "Total", "Nombre Factura", "CUFE"] }
+        { header: ["Fecha", "No. Factura", "Empresa", "Nit", "SubTotal", "IVA", "Total", "Medio Pago", "Nombre Factura", "CUFE"] }
       );
       const wb = utils.book_new();
       utils.book_append_sheet(wb, ws, 'Resumen');
-  
+
       const excelContent = write(wb, { type: 'array', bookType: 'xlsx' });
-  
+
       zip.file('Resumen.xlsx', excelContent);
-  
-      // Generate the ZIP file and trigger download
+
       zip.generateAsync({ type: 'blob' }).then(content => {
         const a = document.createElement('a');
         a.href = URL.createObjectURL(content);
@@ -168,6 +203,13 @@ function Uploader() {
     });
   };
 
+  const handleSearch = (searchValue) => {
+    const filtered = tableData.filter(row => {
+      return row.some(value => value.toString().toLowerCase().includes(searchValue.toLowerCase()));
+    });
+    setFilteredData(filtered);
+  };
+
   return (
     <Container style={{ padding: '20px', width: '100%', maxWidth: '1200px' }}>
       {!isUploaded ? (
@@ -178,15 +220,22 @@ function Uploader() {
         />
       ) : (
         <div>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={downloadFiles}
+          <Box 
+            display="flex" 
+            justifyContent="space-between" 
+            alignItems="center"
             style={{ marginBottom: '20px' }}
           >
-            Descargar archivos
-          </Button>
-          <DataTable data={tableData.map(row => row.slice(0, -1))} />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={downloadFiles}
+            >
+              Descargar archivos
+            </Button>
+            <SearchBar onSearch={handleSearch} />
+          </Box>
+          <DataTable data={filteredData.map(row => row.slice(0, -2))} />
         </div>
       )}
     </Container>
