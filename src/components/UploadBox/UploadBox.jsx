@@ -60,7 +60,7 @@ const UploadBox = ({ inputFileRef, onFilesDrop, onFilesSelect }) => {
         />
         <MdCloudUpload className="icon" />
         <p>Carga o arrastra tus archivos</p>
-        <p>PDF, XML, ZIP</p>
+        <p>XML, ZIP</p>
       </form>
     </div>
   );
