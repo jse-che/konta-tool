@@ -18,13 +18,31 @@ function Uploader() {
   const fileMap = useRef(new Map());
 
   const processFiles = (files) => {
+    // Filtrar archivos ZIP y XML
     const zipFiles = Array.from(files).filter(file => file.name.endsWith('.zip'));
+    const xmlFiles = Array.from(files).filter(file => file.name.endsWith('.xml'));
+
+    // Procesar archivos ZIP
     if (zipFiles.length > 0) {
-      const filePromises = zipFiles.map(zipFile => {
+      const zipFilePromises = zipFiles.map(zipFile => {
         return JSZip.loadAsync(zipFile).then(zip => processZipFile(zip));
       });
 
-      Promise.all(filePromises).then(() => {
+      Promise.all(zipFilePromises).then(() => {
+        setIsUploaded(true);
+      });
+    }
+
+    // Procesar archivos XML individuales
+    if (xmlFiles.length > 0) {
+      const xmlFilePromises = xmlFiles.map(xmlFile => {
+        return xmlFile.text().then(xmlContent => {
+          console.log('Processing XML file:', xmlFile.name);  // Verificar si se procesan los XML
+          processXML(xmlContent, xmlFile.name);
+        });
+      });
+
+      Promise.all(xmlFilePromises).then(() => {
         setIsUploaded(true);
       });
     }
@@ -109,32 +127,22 @@ function Uploader() {
       }
     };
 
-    const formatCurrency = (value) => {
-      return new Intl.NumberFormat('es-CO', {
-        style: 'currency',
-        currency: 'COP',
-      }).format(value);
-    };
-  
     const paymentType = getPaymentType(referenceEventCode);
   
-    const xmlFileNameWithoutExtension = fileName.split("/").pop().replace(".xml", "");
-    const cleanFileName = xmlFileNameWithoutExtension.startsWith("XML_")
-      ? xmlFileNameWithoutExtension.substring(4)
-      : xmlFileNameWithoutExtension;
+    const cleanFileName = fileName.replace(".xml", "");
   
-      const newRow = [
-        issueDate,           
-        parentDocumentID,    
-        registrationName,    
-        companyID,           
-        taxableAmount,      
-        taxAmount,           
-        payableAmount,      
-        paymentType,         
-        cleanFileName,       
-        cufe                  
-      ];
+    const newRow = [
+      issueDate,           
+      parentDocumentID,    
+      registrationName,    
+      companyID,           
+      taxableAmount,      
+      taxAmount,           
+      payableAmount,      
+      paymentType,         
+      cleanFileName,       
+      cufe                  
+    ];
   
     setTableData(prevData => {
       const updatedData = [...prevData, newRow];

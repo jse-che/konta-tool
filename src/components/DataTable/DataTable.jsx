@@ -7,7 +7,6 @@ import './DataTable.css';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-
 const TableWrapper = styled('div')({
   width: '100%',
   margin: '0 auto',
@@ -16,31 +15,31 @@ const TableWrapper = styled('div')({
   flexDirection: 'column',
 });
 
-const StyledTable = styled(Table)(({ theme }) => ({
-  Width: '100%',
+const StyledTable = styled(Table)({
+  width: '100%',
   borderCollapse: 'collapse',
-}));
+});
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  padding: theme.spacing(2),
+  padding: theme.spacing(1.5),
   borderBottom: `1px solid ${theme.palette.divider}`,
   width: '12.5%',
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)({
   '&:nth-of-type(even)': {
     backgroundColor: 'var(--clr-white)',
   },
   '&:last-child td, &:last-child th': {
     border: 0,
   },
-}));
+});
 
 const HeaderCell = styled(TableCell)(({ theme }) => ({
   fontWeight: 'bold',
   backgroundColor: 'var(--clr-blueheader)',
   color: 'var(--clr-white)',
-  padding: theme.spacing(1.5),
+  padding: theme.spacing(1.2),
   textAlign: 'center',
   position: 'sticky',
   top: 0,
@@ -51,46 +50,50 @@ const PaginationContainer = styled('div')({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  marginTop: '10px',
-  padding: '10px',
+  marginTop: '8px',
+  padding: '8px',
   position: 'sticky',
   bottom: 0,
   backgroundColor: 'var(--clr-white)',
   zIndex: 1,
 });
 
-const PageButton = styled('button')(({ theme, active }) => ({
-  width: '30px', 
-  height: '30px', 
-  borderRadius: '50%',
-  margin: '0 3px',
-  border: '1px solid #ccc',
-  backgroundColor: active ? theme.palette.primary.main : 'var(--clr-white)',
-  color: active ? 'var(--clr-white)' : '#000',
-  cursor: 'pointer',
-  fontSize: '14px',
-  fontWeight: active ? 'bold' : 'normal',
-  '&:hover': {
-    backgroundColor: active ? theme.palette.primary.dark : 'var(--clr-white)',
-  },
-}));
-
 const ArrowButton = styled('button')({
   border: 'none',
   backgroundColor: 'transparent',
   cursor: 'pointer',
-  margin: '0 5px', 
+  margin: '0 6px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: '18px',  
+  fontSize: '14px',
+  padding: '6px',
+  borderRadius: '50%',
+  transition: 'all 0.3s ease',
+  '& svg': {
+    fontSize: '18px', // Se redujo el tamaño de los íconos
+  },
+  '&:hover': {
+    backgroundColor: '#007BFF',
+    color: 'white',
+  },
+  '&:disabled': {
+    opacity: 0.5,
+    cursor: 'not-allowed',
+  },
+});
+
+const PageNumber = styled('span')({
+  fontSize: '14px', // Se redujo el tamaño del número
+  fontWeight: 'bold',
+  margin: '0 6px',
 });
 
 const DataTable = ({ data }) => {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
   const [sortedData, setSortedData] = useState(data);
-  const [page, setPage] = useState(0); 
+  const [page, setPage] = useState(0);
   const [rowsPerPage] = useState(9);
 
   const handleRequestSort = (property) => {
@@ -131,24 +134,7 @@ const DataTable = ({ data }) => {
   };
 
   const displayedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
   const totalPages = Math.ceil(sortedData.length / rowsPerPage);
-
-  const renderPageButtons = () => {
-    const buttons = [];
-    for (let i = 0; i < totalPages; i++) {
-      buttons.push(
-        <PageButton
-          key={i}
-          onClick={() => handleChangePage(i)}
-          active={i === page}
-        >
-          {i + 1}
-        </PageButton>
-      );
-    }
-    return buttons;
-  };
 
   return (
     <TableContainer component={Paper}>
@@ -156,103 +142,42 @@ const DataTable = ({ data }) => {
         <StyledTable>
           <TableHead>
             <TableRow>
-              <HeaderCell>
-                <TableSortLabel
-                  active={orderBy === 'fecha'}
-                  direction={orderBy === 'fecha' ? order : 'asc'}
-                  onClick={() => handleRequestSort('fecha')}
-                >
-                  Fecha
-                </TableSortLabel>
-              </HeaderCell>
-              <HeaderCell>
-                <TableSortLabel
-                  active={orderBy === 'noFactura'}
-                  direction={orderBy === 'noFactura' ? order : 'asc'}
-                  onClick={() => handleRequestSort('noFactura')}
-                >
-                  No. Factura
-                </TableSortLabel>
-              </HeaderCell>
-              <HeaderCell>
-                <TableSortLabel
-                  active={orderBy === 'empresa'}
-                  direction={orderBy === 'empresa' ? order : 'asc'}
-                  onClick={() => handleRequestSort('empresa')}
-                >
-                  Empresa
-                </TableSortLabel>
-              </HeaderCell>
-              <HeaderCell>
-                <TableSortLabel
-                  active={orderBy === 'nit'}
-                  direction={orderBy === 'nit' ? order : 'asc'}
-                  onClick={() => handleRequestSort('nit')}
-                >
-                  Nit
-                </TableSortLabel>
-              </HeaderCell>
-              <HeaderCell>
-                <TableSortLabel
-                  active={orderBy === 'subtotal'}
-                  direction={orderBy === 'subtotal' ? order : 'asc'}
-                  onClick={() => handleRequestSort('subtotal')}
-                >
-                  SubTotal
-                </TableSortLabel>
-              </HeaderCell>
-              <HeaderCell>
-                <TableSortLabel
-                  active={orderBy === 'iva'}
-                  direction={orderBy === 'iva' ? order : 'asc'}
-                  onClick={() => handleRequestSort('iva')}
-                >
-                  IVA
-                </TableSortLabel>
-              </HeaderCell>
-              <HeaderCell>
-                <TableSortLabel
-                  active={orderBy === 'total'}
-                  direction={orderBy === 'total' ? order : 'asc'}
-                  onClick={() => handleRequestSort('total')}
-                >
-                  Total
-                </TableSortLabel>
-              </HeaderCell>
-              <HeaderCell>
-                <TableSortLabel
-                  active={orderBy === 'medioPago'}
-                  direction={orderBy === 'medioPago' ? order : 'asc'}
-                  onClick={() => handleRequestSort('medioPago')}
-                >
-                  Medio Pago
-                </TableSortLabel>
-              </HeaderCell>
+              {Object.keys(headerMap).map((key) => (
+                <HeaderCell key={key}>
+                  <TableSortLabel
+                    active={orderBy === key}
+                    direction={orderBy === key ? order : 'asc'}
+                    onClick={() => handleRequestSort(key)}
+                  >
+                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                  </TableSortLabel>
+                </HeaderCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
-          {displayedData.map((row, index) => (
-            <StyledTableRow key={index}>
-              {row.map((cell, cellIndex) => (
-                <StyledTableCell key={cellIndex}>
-                  {cellIndex >= 4 && cellIndex <= 6 
-                    ? new Intl.NumberFormat('es-CO', {
-                        style: 'currency',
-                        currency: 'COP',
-                      }).format(cell)
-                    : cell}
-                </StyledTableCell>
-              ))}
-            </StyledTableRow>
-          ))}
+            {displayedData.map((row, index) => (
+              <StyledTableRow key={index}>
+                {row.map((cell, cellIndex) => (
+                  <StyledTableCell key={cellIndex}>
+                    {cellIndex >= 4 && cellIndex <= 6
+                      ? new Intl.NumberFormat('es-CO', {
+                          style: 'currency',
+                          currency: 'COP',
+                        }).format(cell)
+                      : cell}
+                  </StyledTableCell>
+                ))}
+              </StyledTableRow>
+            ))}
           </TableBody>
         </StyledTable>
         <PaginationContainer>
-          <ArrowButton onClick={() => handleChangePage(page - 1)}>
+          <ArrowButton onClick={() => handleChangePage(page - 1)} disabled={page === 0}>
             <ArrowBackIosIcon />
           </ArrowButton>
-          {renderPageButtons()}
-          <ArrowButton onClick={() => handleChangePage(page + 1)}>
+          <PageNumber>{page + 1} / {totalPages}</PageNumber>
+          <ArrowButton onClick={() => handleChangePage(page + 1)} disabled={page === totalPages - 1}>
             <ArrowForwardIosIcon />
           </ArrowButton>
         </PaginationContainer>
